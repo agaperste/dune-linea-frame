@@ -3,8 +3,6 @@ import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const DUNE_API_KEY = process.env["DUNE_API_KEY"];
-
 function parseResponse(responseBody: string): { key: string; value: any }[] {
     // Parse the JSON string into an object
     const data = JSON.parse(responseBody);
