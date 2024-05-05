@@ -267,6 +267,7 @@ app.frame('/wallet', async (c) => {
     intents: [
       <TextInput placeholder="Enter wallet address..."></TextInput>,
       status === 'response'  && <Button value="wallet">Get wallet LXP and stats 🕵️</Button>,
+      status === 'response' && <Button action='/' value="random">Surprise me 🎰</Button>,
       status === 'response' && <Button.Reset>Back</Button.Reset>,
     ],
   })
