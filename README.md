@@ -8,7 +8,7 @@ This repo showcases how to leverage Dune Linea API with a Farcaster Frame to dis
 - **Input Wallet Address**: Allows users to enter a specific wallet address to fetch and display metrics.
 - **Random Stats**: A fun "Surprise Me" button that fetches random user stats.
 
-### Coming soon
+### Coming soon test
 
 👉 Here's a link to a [cast using this frame](TODO).
 📚 Here is the [Dune Linea API doc](TODO).
