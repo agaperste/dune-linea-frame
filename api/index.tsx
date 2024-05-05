@@ -22,12 +22,12 @@ app.frame('/', async (c) => {
   
   if (status === 'response' && verified && option === 'mine') {
     console.log(`running filter for option ${option}, fid ${frameData?.fid}`)
-    lxp_stats = await getLXPByFID(frameData?.fid ?? 0);
+    lxp_stats = await getLXPByFID(frameData?.fid ?? 0) as { key: any; value: any; }[];
   }
 
   if (status === 'response' && verified && option === 'random') {
     console.log("Fetching a random person's record")
-    lxp_stats = await getLXPRandomly();
+    lxp_stats = await getLXPRandomly() || [];
   }
 
   return c.res({
@@ -156,7 +156,7 @@ app.frame('/wallet', async (c) => {
 
   if (status === 'response' && verified && option === 'wallet' && walletAddress) {
     console.log("running filter for wallet ", walletAddress)
-    lxp_stats = await getLXPByWallet(walletAddress);
+    lxp_stats = await getLXPByWallet(walletAddress) as { key: any; value: any; }[];
   }
 
   return c.res({
