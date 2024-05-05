@@ -125,7 +125,7 @@ export async function getLXPRandomly() {
 
     while (attempts <= maxRetries) {
         const randomUrl = urls[Math.floor(Math.random() * urls.length)];
-        console.log("Fetching lxp stats randomly from:", randomUrl);
+        console.log("Fetching lxp stats randomly");
 
         try {
             const response = await fetch(randomUrl, {
