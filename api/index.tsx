@@ -140,7 +140,7 @@ app.frame('/', async (c) => {
     intents: [
       status === 'initial'  && <Button value="mine">Get my LXP 🤗</Button>,
       status === 'initial'  && <Button action="/wallet" value="others">Input wallet 🕵️</Button>,
-      // (status === 'initial' || status === 'response') && <Button value="random">Surprise me 🎰</Button>,
+      (status === 'initial' || status === 'response') && <Button value="random">Surprise me 🎰</Button>,
       status === 'response' && <Button.Link href="https://github.com/agaperste/dune-linea-frame">See Frame Code</Button.Link>,
       status === 'response' && <Button.Reset>Back</Button.Reset>,
     ],
@@ -267,7 +267,7 @@ app.frame('/wallet', async (c) => {
     intents: [
       <TextInput placeholder="Enter wallet address..."></TextInput>,
       status === 'response'  && <Button value="wallet">Get wallet LXP and stats 🕵️</Button>,
-      // status === 'response' && <Button action='/' value="random">Surprise me 🎰</Button>,
+      status === 'response' && <Button action='/' value="random">Surprise me 🎰</Button>,
       status === 'response' && <Button.Reset>Back</Button.Reset>,
     ],
   })
