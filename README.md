@@ -6,7 +6,6 @@ This repo showcases how to leverage Dune Linea API with a Farcaster Frame to dis
 
 - **Fetch Your Stats**: Gets LXP and related stats if based in your Farcaster ID.
 - **Input Wallet Address**: Allows users to enter a specific wallet address to fetch and display metrics.
-- **Random Stats**: A fun "Surprise Me" button that fetches random user stats.
 
 ### Coming soon
 
