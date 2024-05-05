@@ -32,46 +32,78 @@ function parseResponse(responseBody: string): { key: string; value: any }[] {
 }
 
 export async function getLXPByFID(fid: number) {
-    //scheduled to run daily, and then fetch by filtering by `fid` 
-    //dune query powering the API endpoint: https://dune.com/queries/3672612
     const meta = {
-        "x-dune-api-key": DUNE_API_KEY || ""
+        "x-dune-api-key": process.env.DUNE_API_KEY || ""
     };
     const header = new Headers(meta);
-    console.log(`Fetching lxp stats for fid: ${fid}`);
-    const latest_response = await fetch(`https://api.dune.com/api/v1/points/linea/lxp?&filters=fid=${fid}`
-    , {
+    const url = `https://api.dune.com/api/v1/points/linea/lxp?&filters=fid=${fid}`;
+    const requestOptions = {
         method: 'GET',
         headers: header,
-    });
+    };
+
+    console.log(`Fetching lxp stats for fid: ${fid}`);
     
-    const body = await latest_response.text();
-    const result = parseResponse(body);
-    console.log(result);
-    
-    return result
+    const maxRetries = 10;
+    let attempts = 0;
+
+    while (attempts <= maxRetries) {
+        try {
+            const response = await fetch(url, requestOptions);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const body = await response.text();
+            const result = parseResponse(body);
+            console.log(result);
+            return result; 
+        } catch (error) {
+            console.error(`Attempt ${attempts + 1}: Unable to fetch data - ${error}`);
+            attempts++;
+            if (attempts > maxRetries) {
+                throw new Error(`Failed to fetch data after ${maxRetries} attempts`);
+            }
+        }
+    }
 }
 
+
 export async function getLXPByWallet(wallet: string) {
-    //scheduled to run daily, and then fetch by filtering by `wallet` 
-    //dune query powering the API endpoint: https://dune.com/queries/3672612
     const meta = {
-        "x-dune-api-key": DUNE_API_KEY || ""
+        "x-dune-api-key": process.env.DUNE_API_KEY || ""
     };
     const header = new Headers(meta);
-    console.log(`Fetching lxp stats for wallet: ${wallet}`);
-    const latest_response = await fetch(`https://api.dune.com/api/v1/points/linea/lxp?&filters=wallet=${wallet}`
-    , {
+    const url = `https://api.dune.com/api/v1/points/linea/lxp?&filters=wallet=${wallet}`;
+    const requestOptions = {
         method: 'GET',
         headers: header,
-    });
-    
-    const body = await latest_response.text();
-    const result = parseResponse(body);
-    console.log(result);
-    
-    return result
+    };
+
+    console.log(`Fetching lxp stats for wallet: ${wallet}`);
+
+    const maxRetries = 10;
+    let attempts = 0;
+
+    while (attempts <= maxRetries) {
+        try {
+            const response = await fetch(url, requestOptions);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const body = await response.text();
+            const result = parseResponse(body);
+            console.log(result);
+            return result; 
+        } catch (error) {
+            console.error(`Attempt ${attempts + 1}: Unable to fetch data for wallet - ${error}`);
+            attempts++;
+            if (attempts > maxRetries) {
+                throw new Error(`Failed to fetch data after ${maxRetries} attempts`);
+            }
+        }
+    }
 }
+
 
 export async function getLXPRandomly() {
     // List of URLs to fetch from randomly
@@ -84,23 +116,39 @@ export async function getLXPRandomly() {
         `https://api.dune.com/api/v1/points/linea/lxp?limit=1&sort_by=num_onchain_txns desc&filters=on_farcaster=true and L14D_active_tier!='npc' and L14D_active_tier!='not active'`
     ];
 
-    // Randomly select one URL from the list
-    const randomUrl = urls[Math.floor(Math.random() * urls.length)];
-
-    // Use the selected URL in the fetch call
     const meta = {
-        "x-dune-api-key": DUNE_API_KEY || ""
+        "x-dune-api-key": process.env.DUNE_API_KEY || ""
     };
+
     const header = new Headers(meta);
-    console.log("Fetching lxp stats randomly from:", randomUrl);
-    const latest_response = await fetch(randomUrl, {
-        method: 'GET',
-        headers: header,
-    });
-    
-    const body = await latest_response.text();
-    const result = parseResponse(body);
-    console.log(result);
-    
-    return result;
+
+    const maxRetries = 3;
+    let attempts = 0;
+
+    while (attempts <= maxRetries) {
+        const randomUrl = urls[Math.floor(Math.random() * urls.length)];
+        console.log("Fetching lxp stats randomly from:", randomUrl);
+
+        try {
+            const response = await fetch(randomUrl, {
+                method: 'GET',
+                headers: header,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const body = await response.text();
+            const result = parseResponse(body);
+            console.log(result);
+            return result;  
+        } catch (error) {
+            console.error(`Attempt ${attempts + 1}: Unable to fetch data - ${error}`);
+            attempts++;
+            if (attempts > maxRetries) {
+                throw new Error(`Failed to fetch data after ${maxRetries} attempts`);
+            }
+        }
+    }
 }
