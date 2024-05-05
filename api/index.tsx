@@ -2,7 +2,7 @@ import { Button, Frog, TextInput } from 'frog'
 import { neynar } from 'frog/hubs'
 import { handle } from 'frog/vercel'
 import dotenv from 'dotenv';
-import { getLXPByFID } from './dune.js'
+import { getLXPByFID, getLXPByWallet, getLXPRandomly } from './dune.js'
 import { devtools } from 'frog/dev'
 import { serveStatic } from 'frog/serve-static'
 dotenv.config();
@@ -20,9 +20,14 @@ app.frame('/', async (c) => {
   let lxp_stats: { key: any; value: any; }[] = [];
   console.log(`loading / ..., status=${status}, option=${option}, verified=${verified}`)
   
-  if (status === 'response' && verified && option !== 'others') {
+  if (status === 'response' && verified && option === 'mine') {
     console.log(`running filter for option ${option}, fid ${frameData?.fid}`)
     lxp_stats = await getLXPByFID(frameData?.fid ?? 0);
+  }
+
+  if (status === 'response' && verified && option === 'random') {
+    console.log("Fetching a random person's record")
+    lxp_stats = await getLXPRandomly();
   }
 
   return c.res({
@@ -135,23 +140,23 @@ app.frame('/', async (c) => {
     intents: [
       status === 'initial'  && <Button value="mine">Get my LXP 🤗</Button>,
       status === 'initial'  && <Button action="/wallet" value="others">Input wallet 🕵️</Button>,
-      status === 'initial'  && <Button value="random">Surprise me 🎰</Button>,
-      status === 'response' && <Button.Link href="https://dune.com/queries/3672612">See Frame Code (TODO)</Button.Link>,
+      (status === 'initial' || status === 'response') && <Button value="random">Surprise me 🎰</Button>,
+      status === 'response' && <Button.Link href="https://github.com/agaperste/dune-linea-frame">See Frame Code</Button.Link>,
       status === 'response' && <Button.Reset>Back</Button.Reset>,
     ],
   })
 })
 
 app.frame('/wallet', async (c) => {
-  const { buttonValue, inputText, status, frameData, verified } = c
-  const option = inputText || buttonValue
+  const { buttonValue, inputText, status, verified } = c
+  const option = buttonValue
+  const walletAddress = inputText
   let lxp_stats: { key: any; value: any; }[] = [];
   console.log(`loading /wallet ..., status=${status}, option=${option}, verified=${verified}`)
 
-  if (status === 'response' && verified && option === 'wallet') {
-    console.log("TODO need to do query by wallet address..")
-    // console.log("running filter", frameData?.fid)
-    // lxp_stats = await getLXPByFID(frameData?.fid ?? 0);
+  if (status === 'response' && verified && option === 'wallet' && walletAddress) {
+    console.log("running filter for wallet ", walletAddress)
+    lxp_stats = await getLXPByWallet(walletAddress);
   }
 
   return c.res({
@@ -186,12 +191,48 @@ app.frame('/wallet', async (c) => {
           }}
         >
           {status === 'response'
-            ? option === 'wallet'
-              ? "wallet LXP and stats placeholder"
-                // lxp_stats.map((result) => (
-                //   <div style={{ textAlign: 'right' }}>
-                //     {`${result.key}: ${result.value}`}
-                //   </div>))
+            ? option && walletAddress
+              ? (lxp_stats.length > 0 ?
+                <div style={{
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  padding: '20px', 
+                  fontSize: '38px', 
+                  color: '#333', 
+                  fontFamily: 'Arial, sans-serif', 
+                  textAlign: 'left'  // Ensures that all text is aligned left
+                }}>
+                  <div style={{
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    marginBottom: '15px', 
+                    fontWeight: 'bold'
+                  }}>
+                    {`LXP Balance 🧮: ${lxp_stats.find(stat => stat.key === 'current_lxp')?.value || '0'}`}
+                  </div>
+                  <div style={{
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    marginBottom: '15px'
+                  }}>
+                    <div>{`Farcaster Name 🆔: ${lxp_stats.find(stat => stat.key === 'fname')?.value}`}</div>
+                    <div>{`Activity Level 👑: ${lxp_stats.find(stat => stat.key === 'L14D_active_tier')?.value}`}</div>
+                    <div>{`Top Engagers 👋: ${lxp_stats.find(stat => stat.key === 'top_engagers')?.value}`}</div>
+                    <div>{`Top Channels 💬: ${lxp_stats.find(stat => stat.key === 'top_channels')?.value}`}</div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div>{`Days on Chain 🧓: ${lxp_stats.find(stat => stat.key === 'days_old_onchain')?.value}`}</div>
+                    <div>{`Onchain Transactions 🧾: ${lxp_stats.find(stat => stat.key === 'num_onchain_txns')?.value}`}</div>
+                    <div>{`Deployed Contracts 📜: ${lxp_stats.find(stat => stat.key === 'contracts_deployed')?.value}`}</div>
+                  </div>
+                </div>
+                : <div style={{
+                    padding: '20px', 
+                    fontSize: '48px', 
+                    fontWeight: 'bold', 
+                    color: '#333', 
+                    textAlign: 'left'  // Aligns text left if no LXP data
+                  }}>The wallet has no LXP 😢</div>)
               : `Check wallet's Linea LXP balance 👛 w/ \n Fun social and onchain metrics 🤝⛓📈🥇 \n`
             : `Check wallet's Linea LXP balance 👛 w/ \n Fun social and onchain metrics 🤝⛓📈🥇 \n`}
         </div>
