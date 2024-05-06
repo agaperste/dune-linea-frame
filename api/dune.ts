@@ -14,15 +14,16 @@ function parseResponse(responseBody: string): { key: string; value: any }[] {
 
         // Map the desired properties to key-value pairs
         return [
-            { key: 'current_lxp', value: firstRow.current_lxp },
-            { key: 'fname', value: firstRow.fname },
-            { key: 'L14D_active_tier', value: firstRow.L14D_active_tier },
-            { key: 'top_engagers', value: firstRow.top_engagers.join(', ') },
-            { key: 'top_channels', value: firstRow.top_channels.join(', ') },
-            { key: 'days_old_onchain', value: firstRow.days_old_onchain },
-            { key: 'num_onchain_txns', value: firstRow.num_onchain_txns },
-            { key: 'contracts_deployed', value: firstRow.contracts_deployed }
+            { key: 'current_lxp', value: firstRow.current_lxp ?? 0 },
+            { key: 'fname', value: firstRow.fname ?? 'Not found' },
+            { key: 'L14D_active_tier', value: firstRow.L14D_active_tier ?? '-' },
+            { key: 'top_engagers', value: (firstRow.top_engagers?.join(', ') ?? '-') },
+            { key: 'top_channels', value: (firstRow.top_channels?.join(', ') ?? '-') },
+            { key: 'days_old_onchain', value: firstRow.days_old_onchain ?? '-' },
+            { key: 'num_onchain_txns', value: firstRow.num_onchain_txns ?? '-' },
+            { key: 'contracts_deployed', value: firstRow.contracts_deployed ?? '-' }
         ];
+        
     } else {
         // Return an empty array if no rows were found
         return [];
@@ -48,7 +49,7 @@ export async function getLXPByFID(fid: number) {
     while (attempts <= maxRetries) {
         try {
             const response = await fetch(url, requestOptions);
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const body = await response.text();
@@ -79,13 +80,13 @@ export async function getLXPByWallet(wallet: string) {
 
     console.log(`Fetching lxp stats for wallet: ${wallet}`);
 
-    const maxRetries = 10;
+    const maxRetries = 5;
     let attempts = 0;
 
     while (attempts <= maxRetries) {
         try {
             const response = await fetch(url, requestOptions);
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const body = await response.text();
@@ -120,7 +121,7 @@ export async function getLXPRandomly() {
 
     const header = new Headers(meta);
 
-    const maxRetries = 3;
+    const maxRetries = 10;
     let attempts = 0;
 
     while (attempts <= maxRetries) {
@@ -133,7 +134,7 @@ export async function getLXPRandomly() {
                 headers: header,
             });
 
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 

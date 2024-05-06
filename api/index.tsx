@@ -23,12 +23,10 @@ app.frame('/', async (c) => {
   if (status === 'response' && verified && option === 'mine') {
     console.log(`running filter for option ${option}, fid ${frameData?.fid}`)
     lxp_stats = await getLXPByFID(frameData?.fid ?? 0) as { key: any; value: any; }[];
-  }
-
-  if (status === 'response' && verified && option === 'random') {
+  } else if (status === 'response' && option === 'random') {
     console.log("Fetching a random person's record")
     lxp_stats = await getLXPRandomly() || [];
-  }
+  } 
 
   return c.res({
     image: (

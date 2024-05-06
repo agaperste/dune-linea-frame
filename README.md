@@ -14,7 +14,7 @@ This repo showcases how to leverage Dune Linea API with a Farcaster Frame to dis
 
 📚 Here is the [Dune Linea API doc](https://docs.dune.com/api-reference/projects/endpoint/linea_lxp).
 
-📺 Quick tutorial on how to build with Dune API
+📺 Quick tutorial on [how to build with Dune API](https://youtu.be/a6Jpgr-YIGA?si=6nHjc4azGyw_zS0F)
 
 🫡 This frame is built using the [Frog framework](https://frog.fm/). Please head over to their document to [install](https://frog.fm/installation) Frog. (_For this repo, we followed the [quickstart for bootstrap via Vercel](https://frog.fm/getting-started#bootstrap-via-vercel), feel free to check it out._)
 
