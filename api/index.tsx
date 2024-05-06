@@ -102,7 +102,7 @@ app.frame('/', async (c) => {
                     color: '#333', 
                     textAlign: 'left'  // Aligns text left if no LXP data
                   }}>You have no LXP 😢</div>)
-              : ''
+              : `Something went wrong please try again 🤔`
             : `Get your Linea LXP balance 🧮 w/ \n Fun social and onchain metrics 🤝⛓📈🥇 \n `}
 
 
