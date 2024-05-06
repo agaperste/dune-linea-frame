@@ -198,7 +198,7 @@ app.frame('/wallet', async (c) => {
                   fontSize: '38px', 
                   color: '#333', 
                   fontFamily: 'Arial, sans-serif', 
-                  textAlign: 'left'  // Ensures that all text is aligned left
+                  textAlign: 'left' 
                 }}>
                   <div style={{
                     display: 'flex', 
@@ -229,7 +229,7 @@ app.frame('/wallet', async (c) => {
                     fontSize: '48px', 
                     fontWeight: 'bold', 
                     color: '#333', 
-                    textAlign: 'left'  // Aligns text left if no LXP data
+                    textAlign: 'left'
                   }}>The wallet has no LXP 😢</div>)
               : `Check wallet's Linea LXP balance 👛 w/ \n Fun social and onchain metrics 🤝⛓📈🥇 \n`
             : `Check wallet's Linea LXP balance 👛 w/ \n Fun social and onchain metrics 🤝⛓📈🥇 \n`}

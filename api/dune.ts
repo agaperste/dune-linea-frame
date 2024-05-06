@@ -1,5 +1,6 @@
 import { Headers } from 'node-fetch';
 import fetch from 'node-fetch';
+import fids from './resources/fids.js'; 
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -105,16 +106,6 @@ export async function getLXPByWallet(wallet: string) {
 
 
 export async function getLXPRandomly() {
-    // List of URLs to fetch from randomly
-    const urls = [
-        `https://api.dune.com/api/v1/points/linea/lxp?limit=1&sort_by=current_lxp desc&filters=on_farcaster=true`,
-        `https://api.dune.com/api/v1/points/linea/lxp?limit=1&sort_by=current_lxp desc&filters=on_farcaster=true and L14D_active_tier!='npc' and L14D_active_tier!='not active'`,
-        `https://api.dune.com/api/v1/points/linea/lxp?limit=1&sort_by=num_followers desc&filters=on_farcaster=true and L14D_active_tier!='npc'`,
-        `https://api.dune.com/api/v1/points/linea/lxp?limit=1&sort_by=nft_volume_usd desc&filters=on_farcaster=true and L14D_active_tier!='npc'`,
-        `https://api.dune.com/api/v1/points/linea/lxp?limit=1&sort_by=contracts_deployed desc&filters=on_farcaster=true and L14D_active_tier!='npc' and L14D_active_tier!='not active'`,
-        `https://api.dune.com/api/v1/points/linea/lxp?limit=1&sort_by=num_onchain_txns desc&filters=on_farcaster=true and L14D_active_tier!='npc' and L14D_active_tier!='not active'`
-    ];
-
     const meta = {
         "x-dune-api-key": process.env.DUNE_API_KEY || ""
     };
@@ -125,11 +116,13 @@ export async function getLXPRandomly() {
     let attempts = 0;
 
     while (attempts <= maxRetries) {
-        const randomUrl = urls[Math.floor(Math.random() * urls.length)];
-        console.log("Fetching lxp stats randomly");
+        // Randomly pick an FID from the list
+        const randomFID = fids[Math.floor(Math.random() * fids.length)];
+        const url = `https://api.dune.com/api/v1/points/linea/lxp?&filters=fid=${randomFID}`;
+        console.log(`Fetching lxp stats for FID: ${randomFID}`);
 
         try {
-            const response = await fetch(randomUrl, {
+            const response = await fetch(url, {
                 method: 'GET',
                 headers: header,
             });
